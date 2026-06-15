@@ -11,6 +11,18 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/duckpjvzexe/scriptRO/
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
+local StarterGui = game:GetService("StarterGui")
+
+local function Notify(title, text, duration)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = tostring(title),
+            Text = tostring(text),
+            Duration = duration or 5
+        })
+    end)
+end
+
 local requestFunction =
     (syn and syn.request) or
     (http and http.request) or
@@ -151,8 +163,8 @@ local function SendWebhook(PetName, PetUID, Price, LeaveTime)
         embeds = { Embed }
     }
 
-    pcall(function()
-        requestFunction({
+    local Success, Response = pcall(function()
+        return requestFunction({
             Url = Config.Webhook,
             Method = "POST",
             Headers = {
@@ -161,6 +173,20 @@ local function SendWebhook(PetName, PetUID, Price, LeaveTime)
             Body = HttpService:JSONEncode(Data)
         })
     end)
+
+    if Success then
+        Notify(
+            "📨 Webhook Sent",
+            PetName,
+            5
+        )
+    else
+        Notify(
+            "❌ Webhook Failed",
+            PetName,
+            5
+        )
+    end
 end
 
 local function CheckPet(PetModel)
@@ -217,6 +243,17 @@ local function CheckPet(PetModel)
         LeaveTime
     ))
 
+    Notify(
+        "🐾 Pet Found!",
+        string.format(
+            "%s (%s)\nPrice: %s",
+            PetName,
+            Rarity,
+            Price
+        ),
+        10
+    )
+
     SendWebhook(
         PetName,
         PetUID,
@@ -242,5 +279,11 @@ WildPetSpawns.ChildAdded:Connect(function(Pet)
         CheckPet(Pet)
     end)
 end)
+
+Notify(
+    "Pet Tracker",
+    "Script Loaded Successfully",
+    10
+)
 
 print("[Pet Tracker] Loaded")
