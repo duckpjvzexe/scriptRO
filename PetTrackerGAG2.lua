@@ -6,6 +6,8 @@ if _G.PetTrackerGAG2_DuckXHub_Running then
 end
 _G.PetTrackerGAG2_DuckXHub_Running = true
 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/duckpjvzexe/scriptRO/refs/heads/main/PetListGAG2.lua"))()
+
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
